@@ -189,11 +189,11 @@ func (c *LLMClient) callOpenAI(ctx context.Context, userPrompt string) (string, 
 
 // Regex patterns to parse scores from text
 var (
-	overallRegex = regexp.MustCompile(`(?i)Overall:\s*(\d+)/75\s*(?:[—\-–]\s*([A-Za-z0-9]+))?`)
-	trRegex      = regexp.MustCompile(`(?i)T/R\s*[—\-–]\s*(\d+)/75`)
-	ccRegex      = regexp.MustCompile(`(?i)C/C\s*[—\-–]\s*(\d+)/75`)
-	gaRegex      = regexp.MustCompile(`(?i)G/A\s*[—\-–]\s*(\d+)/75`)
-	lrRegex      = regexp.MustCompile(`(?i)L/R\s*[—\-–]\s*(\d+)/75`)
+	overallRegex = regexp.MustCompile(`(?i)OVERALL(?:\s*SCORE)?\*?:\s*\*?(\d+)\s*/\s*75\s*(?:[—\-–]\s*\*?([A-Za-z0-9]+))?`)
+	trRegex      = regexp.MustCompile(`(?i)T/R[^\d]*?(\d+)\s*/\s*75`)
+	ccRegex      = regexp.MustCompile(`(?i)C/C[^\d]*?(\d+)\s*/\s*75`)
+	gaRegex      = regexp.MustCompile(`(?i)G/A[^\d]*?(\d+)\s*/\s*75`)
+	lrRegex      = regexp.MustCompile(`(?i)L/R[^\d]*?(\d+)\s*/\s*75`)
 )
 
 func parseAssessmentResult(text string) *models.AssessmentResult {

@@ -274,25 +274,39 @@ func splitText(text string, limit int) []string {
 	runes := []rune(text)
 
 	for len(runes) > limit {
-		// Find last newline before limit
 		splitIdx := -1
-		for i := limit; i >= limit-500 && i > 0; i-- {
-			if runes[i] == '\n' {
-				splitIdx = i
-				break
+		subStr := string(runes[:limit])
+
+		// Prefer splitting at section divider or double newline
+		if idx := strings.LastIndex(subStr, "━━━━━━━━━━━━━━━━━━━━━"); idx > limit-1200 && idx > 0 {
+			splitIdx = idx
+		} else if idx := strings.LastIndex(subStr, "\n\n"); idx > limit-800 && idx > 0 {
+			splitIdx = idx
+		} else {
+			for i := limit; i >= limit-500 && i > 0; i-- {
+				if runes[i] == '\n' {
+					splitIdx = i
+					break
+				}
 			}
 		}
 
-		if splitIdx == -1 {
+		if splitIdx <= 0 {
 			splitIdx = limit
 		}
 
-		chunks = append(chunks, string(runes[:splitIdx]))
+		chunk := strings.TrimSpace(string(runes[:splitIdx]))
+		if chunk != "" {
+			chunks = append(chunks, chunk)
+		}
 		runes = runes[splitIdx:]
 	}
 
 	if len(runes) > 0 {
-		chunks = append(chunks, string(runes))
+		chunk := strings.TrimSpace(string(runes))
+		if chunk != "" {
+			chunks = append(chunks, chunk)
+		}
 	}
 
 	return chunks

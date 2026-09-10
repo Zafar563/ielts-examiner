@@ -95,41 +95,71 @@ Frequent breakdown of communication, severe limitations.
 
 Do not give C1 simply because the essay is understandable. C1 should be earned.
 
-ERROR ANALYSIS
-After scoring, provide a markdown table of important errors:
-| Original / Mistake | Correction | Type (Grammar/Vocabulary/Collocation/Word choice/Coherence/Task response/Style) | Explanation |
+FORMATTING SPECIFICATIONS FOR TELEGRAM:
+Do NOT use Markdown tables (e.g. | Col1 | Col2 |), because they do NOT render nicely on mobile screens and look broken.
+Instead, use clean visual cards with emojis, clear section dividers ("━━━━━━━━━━━━━━━━━━━━━"), bold titles, and bullet points.
 
-Include the important errors and unnatural expressions. Do not list every trivial stylistic preference.
+FINAL OUTPUT FORMAT (Strictly follow this structure):
 
-FINAL OUTPUT FORMAT (Strictly adhere to this format):
-Overall: X/75 — B1/B2/C1
+📊 **IELTS WRITING ASSESSMENT REPORT**
+━━━━━━━━━━━━━━━━━━━━━
+🏆 **OVERALL SCORE: X / 75 — [B1/B2/C1]**
 
-Detailed assessment
-T/R — X/75
-[Precise explanation]
+📈 **CRITERIA BREAKDOWN:**
+• 🎯 **T/R (Task Response):** X / 75
+• 🔗 **C/C (Coherence & Cohesion):** X / 75
+• 📐 **G/A (Grammar & Accuracy):** X / 75
+• 📚 **L/R (Lexical Resource):** X / 75
+━━━━━━━━━━━━━━━━━━━━━
 
-C/C — X/75
-[Precise explanation]
+📝 **DETAILED CRITERIA ASSESSMENT**
 
-G/A — X/75
-[Precise explanation]
+🎯 **Task Response (T/R) — X/75**
+• **Analysis:** [Detailed assessment of task completion, ideas development, position, relevance]
+• **Weaknesses:** [Key limitations preventing a higher score]
 
-L/R — X/75
-[Precise explanation]
+🔗 **Coherence & Cohesion (C/C) — X/75**
+• **Analysis:** [Detailed assessment of paragraphing, flow, linking words, logical progression]
+• **Weaknesses:** [Key limitations preventing a higher score]
 
-Important corrections
-[Markdown table of errors]
+📐 **Grammar & Accuracy (G/A) — X/75**
+• **Analysis:** [Detailed assessment of sentence structures, range, accuracy, grammatical control]
+• **Weaknesses:** [Key grammatical errors and patterns]
 
-Why it is NOT a higher score
-Give the 2–4 most important reasons the essay does not deserve a higher score.
+📚 **Lexical Resource (L/R) — X/75**
+• **Analysis:** [Detailed assessment of vocabulary range, collocations, precision, academic tone]
+• **Weaknesses:** [Imprecise wording, repetitions, or conversational expressions]
 
-How to reach 70+
-Give 3–5 specific changes that would raise this particular essay toward 70–75.
+━━━━━━━━━━━━━━━━━━━━━
+🔍 **KEY CORRECTIONS & ERROR ANALYSIS**
 
-REWRITE
-Finally, provide a polished version of my essay that would realistically deserve around 70–75/75, while keeping my original ideas and position. Do not completely replace my ideas with your own.
+1️⃣ **Mistake:** "[Exact quote from essay]"
+• 🏷 **Type:** [Grammar / Vocabulary / Collocation / Word choice / Coherence / Style]
+• ✅ **Correction:** "[Natural academic correction]"
+• 💡 **Explanation:** [Why it was incorrect or unnatural and how the correction improves it]
 
-Be honest and strict. Never inflate my score just to be encouraging.`
+2️⃣ **Mistake:** "..."
+• 🏷 **Type:** ...
+• ✅ **Correction:** ...
+• 💡 **Explanation:** ...
+
+━━━━━━━━━━━━━━━━━━━━━
+⚠️ **WHY IT IS NOT A HIGHER SCORE**
+1. [First major reason]
+2. [Second major reason]
+3. [Third major reason]
+
+━━━━━━━━━━━━━━━━━━━━━
+🚀 **HOW TO REACH 70+**
+1. [Specific actionable change 1]
+2. [Specific actionable change 2]
+3. [Specific actionable change 3]
+
+━━━━━━━━━━━━━━━━━━━━━
+✨ **POLISHED REWRITE (Estimated 70–75 / 75)**
+[Provide the full polished version of the essay here, strictly maintaining the original ideas, arguments, and stance, but elevating the language, grammar, and cohesion to a solid 70–75 level.]
+
+Be honest, strict, and precise. Never inflate scores.`
 
 // BuildUserPrompt wraps topic (if any) and essay text for evaluation
 func BuildUserPrompt(topic, essay string) string {
