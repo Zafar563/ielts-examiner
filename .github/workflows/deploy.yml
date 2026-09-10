@@ -1,0 +1,48 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy IELTS Bot
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy via SSH to Server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script: |
+            set -e
+
+            # Project directory on server
+            TARGET_DIR="~/ielts_bot"
+            
+            # Agar papka mavjud bo'lmasa git clone qilamiz, bo'lsa git pull
+            if [ ! -d "$TARGET_DIR" ]; then
+              echo "Cloning repository..."
+              git clone https://github.com/${{ github.repository }}.git "$TARGET_DIR"
+            fi
+
+            cd "$TARGET_DIR"
+            
+            echo "Pulling latest code from main branch..."
+            git pull origin main
+
+            echo "Rebuilding and starting containers with Docker Compose..."
+            docker compose down
+            docker compose up -d --build
+
+            echo "Cleaning up dangling images..."
+            docker image prune -f
+
+            echo "Deployment successfully finished!"
