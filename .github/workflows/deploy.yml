@@ -28,10 +28,13 @@ jobs:
             TARGET_DIR="$HOME/ielts_bot"
             REPO_URL="https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
             
-            # Agar papka mavjud bo'lmasa git clone qilamiz, bo'lsa git pull
-            if [ ! -d "$TARGET_DIR" ]; then
+            # Agar repozitoriy klonlanmagan bo'lsa
+            if [ ! -d "$TARGET_DIR/.git" ]; then
               echo "Cloning repository..."
-              git clone "$REPO_URL" "$TARGET_DIR"
+              mkdir -p "$TARGET_DIR"
+              git clone "$REPO_URL" "$TARGET_DIR/_temp_clone"
+              cp -rT "$TARGET_DIR/_temp_clone" "$TARGET_DIR"
+              rm -rf "$TARGET_DIR/_temp_clone"
             fi
 
             cd "$TARGET_DIR"
