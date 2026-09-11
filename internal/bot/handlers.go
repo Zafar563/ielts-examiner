@@ -36,14 +36,14 @@ var skipTopicKeyboard = tgbotapi.NewReplyKeyboard(
 )
 
 var langSettingsKeyboard = tgbotapi.NewInlineKeyboardMarkup(
-	tgbotapi.NewInlineKeyboardButtonRow(
+	tgbotapi.NewInlineKeyboardRow(
 		tgbotapi.NewInlineKeyboardButtonData("🇺🇿 O'zbekcha izohlar", "set_lang:uz"),
 		tgbotapi.NewInlineKeyboardButtonData("🇬🇧 English explanations", "set_lang:en"),
 	),
 )
 
 var checkLangKeyboard = tgbotapi.NewInlineKeyboardMarkup(
-	tgbotapi.NewInlineKeyboardButtonRow(
+	tgbotapi.NewInlineKeyboardRow(
 		tgbotapi.NewInlineKeyboardButtonData("🇺🇿 O'zbekcha", "check_lang:uz"),
 		tgbotapi.NewInlineKeyboardButtonData("🇬🇧 English", "check_lang:en"),
 	),
