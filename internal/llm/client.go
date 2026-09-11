@@ -78,6 +78,9 @@ func (c *LLMClient) callGemini(ctx context.Context, userPrompt, systemInstructio
 		},
 		"generationConfig": map[string]interface{}{
 			"temperature": 0.2,
+			"thinkingConfig": map[string]interface{}{
+				"thinkingLevel": "MINIMAL",
+			},
 		},
 	}
 

@@ -56,7 +56,7 @@ func Load() (*Config, error) {
 		if cfg.LLMProvider == "openai" {
 			cfg.LLMModel = "gpt-4o-mini"
 		} else {
-			cfg.LLMModel = "gemini-3.6-flash"
+			cfg.LLMModel = "gemini-3.5-flash-lite"
 		}
 	}
 
