@@ -1,0 +1,2 @@
+ALTER TABLE submissions DROP COLUMN IF EXISTS lang;
+ALTER TABLE users DROP COLUMN IF EXISTS feedback_lang;

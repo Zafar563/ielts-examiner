@@ -4,12 +4,13 @@ import "time"
 
 // User represents a Telegram bot user
 type User struct {
-	TelegramID int64     `json:"telegram_id"`
-	Username   string    `json:"username"`
-	FirstName  string    `json:"first_name"`
-	LastName   string    `json:"last_name"`
-	CreatedAt  time.Time `json:"created_at"`
-	UpdatedAt  time.Time `json:"updated_at"`
+	TelegramID   int64     `json:"telegram_id"`
+	Username     string    `json:"username"`
+	FirstName    string    `json:"first_name"`
+	LastName     string    `json:"last_name"`
+	FeedbackLang string    `json:"feedback_lang"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
 }
 
 // Submission represents an essay submitted for evaluation
@@ -25,6 +26,7 @@ type Submission struct {
 	LRScore      int       `json:"lr_score"`
 	CEFRLevel    string    `json:"cefr_level"`
 	Feedback     string    `json:"feedback"`
+	Lang         string    `json:"lang"`
 	CreatedAt    time.Time `json:"created_at"`
 }
 

@@ -33,18 +33,45 @@ func (r *Repository) UpsertUser(ctx context.Context, user *models.User) error {
 	return nil
 }
 
+// SetUserLang updates the feedback language preference for a user
+func (r *Repository) SetUserLang(ctx context.Context, userID int64, lang string) error {
+	query := `
+	UPDATE users SET feedback_lang = $2, updated_at = CURRENT_TIMESTAMP
+	WHERE telegram_id = $1;
+	`
+	_, err := r.db.ExecContext(ctx, query, userID, lang)
+	if err != nil {
+		return fmt.Errorf("failed to set user lang: %w", err)
+	}
+	return nil
+}
+
+// GetUserLang returns the feedback language preference for a user (defaults to "uz")
+func (r *Repository) GetUserLang(ctx context.Context, userID int64) string {
+	query := `SELECT COALESCE(feedback_lang, 'uz') FROM users WHERE telegram_id = $1;`
+	var lang string
+	err := r.db.QueryRowContext(ctx, query, userID).Scan(&lang)
+	if err != nil || lang == "" {
+		return "uz"
+	}
+	return lang
+}
+
 // SaveSubmission records an essay assessment result
 func (r *Repository) SaveSubmission(ctx context.Context, sub *models.Submission) error {
+	if sub.Lang == "" {
+		sub.Lang = "uz"
+	}
 	query := `
 	INSERT INTO submissions (
 		user_id, topic, essay_text, overall_score, 
-		tr_score, cc_score, ga_score, lr_score, cefr_level, feedback
-	) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+		tr_score, cc_score, ga_score, lr_score, cefr_level, feedback, lang
+	) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 	RETURNING id, created_at;
 	`
 	err := r.db.QueryRowContext(ctx, query,
 		sub.UserID, sub.Topic, sub.EssayText, sub.OverallScore,
-		sub.TRScore, sub.CCScore, sub.GAScore, sub.LRScore, sub.CEFRLevel, sub.Feedback,
+		sub.TRScore, sub.CCScore, sub.GAScore, sub.LRScore, sub.CEFRLevel, sub.Feedback, sub.Lang,
 	).Scan(&sub.ID, &sub.CreatedAt)
 	if err != nil {
 		return fmt.Errorf("failed to save submission: %w", err)

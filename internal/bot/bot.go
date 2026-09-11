@@ -46,6 +46,12 @@ func (b *Bot) Start() error {
 	updates := b.api.GetUpdatesChan(u)
 
 	for update := range updates {
+		// Handle inline button callbacks
+		if update.CallbackQuery != nil {
+			b.handleCallbackQuery(update.CallbackQuery)
+			continue
+		}
+
 		if update.Message == nil {
 			continue
 		}
@@ -64,10 +70,12 @@ func (b *Bot) Start() error {
 				b.handleCheckPrompt(update.Message)
 			case "history":
 				b.handleHistory(update.Message)
+			case "lang", "language":
+				b.handleLanguageMenu(update.Message)
 			case "cancel":
 				b.handleCancel(update.Message)
 			default:
-				b.sendPlainMessage(update.Message.Chat.ID, "Noma'lum buyruq. Mavjud buyruqlar: /start, /check, /history, /help, /cancel")
+				b.sendPlainMessage(update.Message.Chat.ID, "Noma'lum buyruq. Mavjud buyruqlar: /start, /check, /lang, /history, /help, /cancel")
 			}
 			continue
 		}
@@ -78,6 +86,8 @@ func (b *Bot) Start() error {
 			b.handleCheckPrompt(update.Message)
 		case "📊 Natijalarim":
 			b.handleHistory(update.Message)
+		case "🌐 Til / Language":
+			b.handleLanguageMenu(update.Message)
 		case "ℹ️ Yordam & Mezonlar":
 			b.handleHelp(update.Message)
 		case "❌ Bekor qilish":

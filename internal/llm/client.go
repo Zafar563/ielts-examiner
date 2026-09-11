@@ -17,7 +17,7 @@ import (
 )
 
 type Client interface {
-	AssessEssay(ctx context.Context, topic, essay string) (*models.AssessmentResult, error)
+	AssessEssay(ctx context.Context, topic, essay, lang string) (*models.AssessmentResult, error)
 }
 
 type LLMClient struct {
@@ -34,15 +34,19 @@ func NewClient(cfg *config.Config) *LLMClient {
 	}
 }
 
-func (c *LLMClient) AssessEssay(ctx context.Context, topic, essay string) (*models.AssessmentResult, error) {
+func (c *LLMClient) AssessEssay(ctx context.Context, topic, essay, lang string) (*models.AssessmentResult, error) {
+	if lang == "" {
+		lang = "uz"
+	}
 	userPrompt := BuildUserPrompt(topic, essay)
+	systemInstruction := GetSystemPrompt(lang)
 	var rawResponse string
 	var err error
 
 	if strings.ToLower(c.cfg.LLMProvider) == "openai" {
-		rawResponse, err = c.callOpenAI(ctx, userPrompt)
+		rawResponse, err = c.callOpenAI(ctx, userPrompt, systemInstruction)
 	} else {
-		rawResponse, err = c.callGemini(ctx, userPrompt)
+		rawResponse, err = c.callGemini(ctx, userPrompt, systemInstruction)
 	}
 
 	if err != nil {
@@ -54,14 +58,14 @@ func (c *LLMClient) AssessEssay(ctx context.Context, topic, essay string) (*mode
 }
 
 // callGemini communicates with Google Gemini API
-func (c *LLMClient) callGemini(ctx context.Context, userPrompt string) (string, error) {
+func (c *LLMClient) callGemini(ctx context.Context, userPrompt, systemInstruction string) (string, error) {
 	url := fmt.Sprintf("https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s",
 		c.cfg.LLMModel, c.cfg.LLMAPIKey)
 
 	payload := map[string]interface{}{
 		"system_instruction": map[string]interface{}{
 			"parts": []map[string]string{
-				{"text": SystemPrompt},
+				{"text": systemInstruction},
 			},
 		},
 		"contents": []map[string]interface{}{
@@ -125,7 +129,7 @@ func (c *LLMClient) callGemini(ctx context.Context, userPrompt string) (string, 
 }
 
 // callOpenAI communicates with OpenAI Chat Completions API
-func (c *LLMClient) callOpenAI(ctx context.Context, userPrompt string) (string, error) {
+func (c *LLMClient) callOpenAI(ctx context.Context, userPrompt, systemInstruction string) (string, error) {
 	baseURL := "https://api.openai.com/v1"
 	if c.cfg.LLMBaseURL != "" {
 		baseURL = strings.TrimRight(c.cfg.LLMBaseURL, "/")
@@ -135,7 +139,7 @@ func (c *LLMClient) callOpenAI(ctx context.Context, userPrompt string) (string, 
 	payload := map[string]interface{}{
 		"model": c.cfg.LLMModel,
 		"messages": []map[string]string{
-			{"role": "system", "content": SystemPrompt},
+			{"role": "system", "content": systemInstruction},
 			{"role": "user", "content": userPrompt},
 		},
 		"temperature": 0.2,
@@ -189,7 +193,7 @@ func (c *LLMClient) callOpenAI(ctx context.Context, userPrompt string) (string, 
 
 // Regex patterns to parse scores from text
 var (
-	overallRegex = regexp.MustCompile(`(?i)OVERALL(?:\s*SCORE)?\*?:\s*\*?(\d+)\s*/\s*75\s*(?:[—\-–]\s*\*?([A-Za-z0-9]+))?`)
+	overallRegex = regexp.MustCompile(`(?i)(?:OVERALL(?:\s*SCORE)?|UMUMIY\s*BALL)\*?:\s*\*?(\d+)\s*/\s*75\s*(?:[—\-–]\s*\*?([A-Za-z0-9]+))?`)
 	trRegex      = regexp.MustCompile(`(?i)T/R[^\d]*?(\d+)\s*/\s*75`)
 	ccRegex      = regexp.MustCompile(`(?i)C/C[^\d]*?(\d+)\s*/\s*75`)
 	gaRegex      = regexp.MustCompile(`(?i)G/A[^\d]*?(\d+)\s*/\s*75`)

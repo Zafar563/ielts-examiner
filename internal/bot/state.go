@@ -8,12 +8,14 @@ type UserStep int
 
 const (
 	StepIdle UserStep = iota
+	StepWaitingLang
 	StepWaitingTopic
 	StepWaitingEssay
 )
 
 type UserSession struct {
 	Step  UserStep
+	Lang  string
 	Topic string
 }
 

@@ -18,7 +18,10 @@ var mainKeyboard = tgbotapi.NewReplyKeyboard(
 		tgbotapi.NewKeyboardButton("📊 Natijalarim"),
 	),
 	tgbotapi.NewKeyboardButtonRow(
+		tgbotapi.NewKeyboardButton("🌐 Til / Language"),
 		tgbotapi.NewKeyboardButton("ℹ️ Yordam & Mezonlar"),
+	),
+	tgbotapi.NewKeyboardButtonRow(
 		tgbotapi.NewKeyboardButton("❌ Bekor qilish"),
 	),
 )
@@ -29,6 +32,20 @@ var skipTopicKeyboard = tgbotapi.NewReplyKeyboard(
 	),
 	tgbotapi.NewKeyboardButtonRow(
 		tgbotapi.NewKeyboardButton("❌ Bekor qilish"),
+	),
+)
+
+var langSettingsKeyboard = tgbotapi.NewInlineKeyboardMarkup(
+	tgbotapi.NewInlineKeyboardButtonRow(
+		tgbotapi.NewInlineKeyboardButtonData("🇺🇿 O'zbekcha izohlar", "set_lang:uz"),
+		tgbotapi.NewInlineKeyboardButtonData("🇬🇧 English explanations", "set_lang:en"),
+	),
+)
+
+var checkLangKeyboard = tgbotapi.NewInlineKeyboardMarkup(
+	tgbotapi.NewInlineKeyboardButtonRow(
+		tgbotapi.NewInlineKeyboardButtonData("🇺🇿 O'zbekcha", "check_lang:uz"),
+		tgbotapi.NewInlineKeyboardButtonData("🇬🇧 English", "check_lang:en"),
 	),
 )
 
@@ -45,6 +62,7 @@ func (b *Bot) handleStart(message *tgbotapi.Message) {
 			"• 41–50 = B1\n"+
 			"• 51–64 = B2\n"+
 			"• 65–75 = C1\n\n"+
+			"🌐 **Izohlar tili:** O'zbekcha va Inglizcha (tanlashingiz mumkin)\n\n"+
 			"Boshlash uchun pastdagi **\"✍️ Insho tekshirish\"** tugmasini bosing yoki to'g'ridan-to'g'ri insho matnini yuboring.",
 		escapeMarkdown(message.From.FirstName),
 	)
@@ -62,10 +80,10 @@ func (b *Bot) handleHelp(message *tgbotapi.Message) {
 		"• **51–64 (B2):** Samarali muloqot, lekin fikr rivojlantirish yoki lug'atda sezilarli chegaralar bor.\n" +
 		"• **41–50 (B1):** Tushunarli, ammo cheklangan grammatika, oddiy lug'at va zaif izchillik.\n\n" +
 		"📌 *Har bir tekshiruvda siz olasiz:*\n" +
-		"1. Mezonlar bo'yicha aniq ball va batafsil izoh.\n" +
-		"2. Xatolar va tabiiy bo'lmagan jumlalar jadvali (Grammar, Vocabulary, Collocation, Style...).\n" +
+		"1. Mezonlar bo'yicha aniq ball va batafsil izoh (O'zbekcha yoki Inglizcha).\n" +
+		"2. Xatolar va tabiiy bo'lmagan jumlalar tahlili (Grammar, Vocabulary, Collocation, Style...).\n" +
 		"3. Nima uchun bundan yuqori ball ololmaganingiz sabablari.\n" +
-		"4. 70+ ballga chiqish uchun 3–5 ta aniq maslahat.\n" +
+		"4. 70+ ballga chiqish uchun 3–5 ta aniq amaliy maslahat.\n" +
 		"5. Inshongizning asl g'oyasini saqlagan holda 70–75 ballik professional qayta yozilgan varianti (Rewrite)."
 
 	msg := tgbotapi.NewMessage(message.Chat.ID, text)
@@ -74,18 +92,94 @@ func (b *Bot) handleHelp(message *tgbotapi.Message) {
 	b.api.Send(msg)
 }
 
-func (b *Bot) handleCheckPrompt(message *tgbotapi.Message) {
-	session := b.state.GetSession(message.From.ID)
-	session.Step = StepWaitingTopic
-	session.Topic = ""
+func (b *Bot) handleLanguageMenu(message *tgbotapi.Message) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
 
-	text := "📌 **1-QADAM:** Iltimos, insho mavzusini (Task Prompt / Savol matnini) yuboring.\n\n" +
-		"Agar faqat insho matnini tekshirmoqchi bo'lsangiz, **\"⏩ Mavzuni o'tkazib yuborish\"** tugmasini bosing."
+	current := b.repo.GetUserLang(ctx, message.From.ID)
+	langName := "🇺🇿 O'zbekcha"
+	if current == "en" {
+		langName = "🇬🇧 English"
+	}
+
+	text := fmt.Sprintf(
+		"🌐 *Tahlil tili sozlamasi (Feedback Language):*\n\n"+
+			"Hozirgi standart til: *%s*\n\n"+
+			"Insho tahlili, xatolar tushuntirilishi va tavsiyalar qaysi tilda berilsin?",
+		langName,
+	)
 
 	msg := tgbotapi.NewMessage(message.Chat.ID, text)
 	msg.ParseMode = "Markdown"
-	msg.ReplyMarkup = skipTopicKeyboard
+	msg.ReplyMarkup = langSettingsKeyboard
 	b.api.Send(msg)
+}
+
+func (b *Bot) handleCheckPrompt(message *tgbotapi.Message) {
+	session := b.state.GetSession(message.From.ID)
+	session.Step = StepWaitingLang
+	session.Topic = ""
+
+	text := "🌐 **Tahlil va tushuntirishlar qaysi tilda bo'lsin?**\n" +
+		"_Choose explanation language:_"
+
+	msg := tgbotapi.NewMessage(message.Chat.ID, text)
+	msg.ParseMode = "Markdown"
+	msg.ReplyMarkup = checkLangKeyboard
+	b.api.Send(msg)
+}
+
+func (b *Bot) handleCallbackQuery(query *tgbotapi.CallbackQuery) {
+	// Acknowledge callback immediately
+	callback := tgbotapi.NewCallback(query.ID, "")
+	b.api.Request(callback)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	data := query.Data
+	if strings.HasPrefix(data, "set_lang:") {
+		lang := strings.TrimPrefix(data, "set_lang:")
+		_ = b.repo.SetUserLang(ctx, query.From.ID, lang)
+
+		name := "🇺🇿 O'zbekcha"
+		if lang == "en" {
+			name = "🇬🇧 English"
+		}
+		text := fmt.Sprintf("✅ Tahlil tili muvaffaqiyatli saqlandi: *%s*", name)
+		msg := tgbotapi.NewMessage(query.Message.Chat.ID, text)
+		msg.ParseMode = "Markdown"
+		msg.ReplyMarkup = mainKeyboard
+		b.api.Send(msg)
+		return
+	}
+
+	if strings.HasPrefix(data, "check_lang:") {
+		lang := strings.TrimPrefix(data, "check_lang:")
+		_ = b.repo.SetUserLang(ctx, query.From.ID, lang)
+
+		session := b.state.GetSession(query.From.ID)
+		session.Lang = lang
+		session.Step = StepWaitingTopic
+
+		name := "🇺🇿 O'zbekcha"
+		if lang == "en" {
+			name = "🇬🇧 English"
+		}
+
+		prompt := fmt.Sprintf(
+			"✅ Tanlangan til: *%s*\n\n"+
+				"📌 **1-QADAM:** Iltimos, insho mavzusini (Task Prompt / Savol matnini) yuboring.\n\n"+
+				"Agar faqat insho matnini tekshirmoqchi bo'lsangiz, **\"⏩ Mavzuni o'tkazib yuborish\"** tugmasini bosing.",
+			name,
+		)
+
+		msg := tgbotapi.NewMessage(query.Message.Chat.ID, prompt)
+		msg.ParseMode = "Markdown"
+		msg.ReplyMarkup = skipTopicKeyboard
+		b.api.Send(msg)
+		return
+	}
 }
 
 func (b *Bot) handleCancel(message *tgbotapi.Message) {
@@ -125,9 +219,14 @@ func (b *Bot) handleHistory(message *tgbotapi.Message) {
 		if len(topicDisplay) > 35 {
 			topicDisplay = topicDisplay[:32] + "..."
 		}
-		text += fmt.Sprintf("%d. *%s* — *%d/75* (%s)\n   _TR:%d | CC:%d | GA:%d | LR:%d_ — %s\n\n",
+		langBadge := "🇺🇿"
+		if s.Lang == "en" {
+			langBadge = "🇬🇧"
+		}
+		text += fmt.Sprintf("%d. *%s* %s — *%d/75* (%s)\n   _TR:%d | CC:%d | GA:%d | LR:%d_ — %s\n\n",
 			i+1,
 			escapeMarkdown(topicDisplay),
+			langBadge,
 			s.OverallScore,
 			s.CEFRLevel,
 			s.TRScore, s.CCScore, s.GAScore, s.LRScore,
@@ -145,6 +244,21 @@ func (b *Bot) handleIncomingText(message *tgbotapi.Message) {
 	session := b.state.GetSession(message.From.ID)
 
 	switch session.Step {
+	case StepWaitingLang:
+		// If user typed instead of clicking button, default to uz or en based on input
+		lang := "uz"
+		if strings.Contains(strings.ToLower(message.Text), "eng") {
+			lang = "en"
+		}
+		session.Lang = lang
+		session.Step = StepWaitingTopic
+
+		prompt := "📌 **1-QADAM:** Iltimos, insho mavzusini (Task Prompt) yuboring yoki o'tkazib yuboring:"
+		msg := tgbotapi.NewMessage(message.Chat.ID, prompt)
+		msg.ParseMode = "Markdown"
+		msg.ReplyMarkup = skipTopicKeyboard
+		b.api.Send(msg)
+
 	case StepWaitingTopic:
 		if message.Text == "⏩ Mavzuni o'tkazib yuborish" {
 			session.Topic = ""
@@ -164,13 +278,22 @@ func (b *Bot) handleIncomingText(message *tgbotapi.Message) {
 	case StepWaitingEssay:
 		essay := message.Text
 		topic := session.Topic
+		lang := session.Lang
+		if lang == "" {
+			ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+			lang = b.repo.GetUserLang(ctx, message.From.ID)
+			cancel()
+		}
 		b.state.ResetSession(message.From.ID)
-		go b.evaluateAndReply(message.Chat.ID, message.From, topic, essay)
+		go b.evaluateAndReply(message.Chat.ID, message.From, topic, essay, lang)
 
 	default:
-		// If user pastes an essay directly (word count >= 30 or length >= 150)
+		// If user pastes an essay directly (word count >= 25)
 		if len(strings.Fields(message.Text)) >= 25 {
-			go b.evaluateAndReply(message.Chat.ID, message.From, "", message.Text)
+			ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+			lang := b.repo.GetUserLang(ctx, message.From.ID)
+			cancel()
+			go b.evaluateAndReply(message.Chat.ID, message.From, "", message.Text, lang)
 		} else {
 			msg := tgbotapi.NewMessage(message.Chat.ID, "Insho tekshirish uchun '✍️ Insho tekshirish' tugmasini bosing yoki insho matnini to'liq yuboring.")
 			msg.ReplyMarkup = mainKeyboard
@@ -179,9 +302,17 @@ func (b *Bot) handleIncomingText(message *tgbotapi.Message) {
 	}
 }
 
-func (b *Bot) evaluateAndReply(chatID int64, from *tgbotapi.User, topic, essay string) {
-	// Send "thinking / analyzing" status
-	statusMsg := tgbotapi.NewMessage(chatID, "⏳ *Insho qabul qilindi!*\n\nQat'iy mezonlar bo'yicha tahlil qilinmoqda, iltimos kuting...")
+func (b *Bot) evaluateAndReply(chatID int64, from *tgbotapi.User, topic, essay, lang string) {
+	if lang == "" {
+		lang = "uz"
+	}
+
+	statusText := "⏳ *Insho qabul qilindi!*\n\nQat'iy mezonlar bo'yicha tahlil qilinmoqda, iltimos kuting..."
+	if lang == "en" {
+		statusText = "⏳ *Essay received!*\n\nAnalyzing strictly against IELTS criteria, please wait..."
+	}
+
+	statusMsg := tgbotapi.NewMessage(chatID, statusText)
 	statusMsg.ParseMode = "Markdown"
 	sentStatus, err := b.api.Send(statusMsg)
 	if err != nil {
@@ -195,8 +326,8 @@ func (b *Bot) evaluateAndReply(chatID int64, from *tgbotapi.User, topic, essay s
 	ctx, cancel := context.WithTimeout(context.Background(), 150*time.Second)
 	defer cancel()
 
-	// Call Examiner LLM
-	result, err := b.llm.AssessEssay(ctx, topic, essay)
+	// Call Examiner LLM with language preference
+	result, err := b.llm.AssessEssay(ctx, topic, essay, lang)
 	if err != nil {
 		log.Printf("Error evaluating essay: %v", err)
 		b.deleteMessage(chatID, sentStatus.MessageID)
@@ -220,6 +351,7 @@ func (b *Bot) evaluateAndReply(chatID int64, from *tgbotapi.User, topic, essay s
 			LRScore:      result.LRScore,
 			CEFRLevel:    result.CEFRLevel,
 			Feedback:     result.Feedback,
+			Lang:         lang,
 		}
 		if err := b.repo.SaveSubmission(saveCtx, sub); err != nil {
 			log.Printf("Error saving submission to db: %v", err)
@@ -234,7 +366,6 @@ func (b *Bot) evaluateAndReply(chatID int64, from *tgbotapi.User, topic, essay s
 }
 
 func (b *Bot) sendSplittedResponse(chatID int64, text string) {
-	// Telegram message character limit is 4096. Keep chunks under 3800 for safety.
 	chunks := splitText(text, 3800)
 
 	for _, chunk := range chunks {
@@ -244,7 +375,7 @@ func (b *Bot) sendSplittedResponse(chatID int64, text string) {
 
 		_, err := b.api.Send(msg)
 		if err != nil {
-			// If markdown parsing fails due to special characters, send plain text
+			// If markdown parsing fails due to special characters, fallback to plain text
 			log.Printf("Markdown send failed (%v), retrying plain text", err)
 			plainMsg := tgbotapi.NewMessage(chatID, chunk)
 			plainMsg.ReplyMarkup = mainKeyboard

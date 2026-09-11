@@ -94,6 +94,7 @@ func runDefaultSchema(db *sql.DB) error {
 		username VARCHAR(255),
 		first_name VARCHAR(255),
 		last_name VARCHAR(255),
+		feedback_lang VARCHAR(10) DEFAULT 'uz',
 		created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 		updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 	);
@@ -110,6 +111,7 @@ func runDefaultSchema(db *sql.DB) error {
 		lr_score INT,
 		cefr_level VARCHAR(10),
 		feedback TEXT NOT NULL,
+		lang VARCHAR(10) DEFAULT 'uz',
 		created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 	);
 
