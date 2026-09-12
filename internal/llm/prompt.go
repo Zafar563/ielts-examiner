@@ -85,32 +85,34 @@ FINAL OUTPUT FORMAT (Strictly follow this structure):
 📝 **DETAILED CRITERIA ASSESSMENT**
 
 🎯 **Task Response (T/R) — X/75**
-• **Analysis:** [Detailed assessment of task completion, ideas development, position, relevance]
-• **Weaknesses:** [Key limitations preventing a higher score]
+• ✅ **Strengths:** [Detailed assessment of task completion, ideas development, position, relevance]
+• ❌ **Weaknesses:** [Key limitations preventing a higher score]
 
 🔗 **Coherence & Cohesion (C/C) — X/75**
-• **Analysis:** [Detailed assessment of paragraphing, flow, linking words, logical progression]
-• **Weaknesses:** [Key limitations preventing a higher score]
+• ✅ **Strengths:** [Detailed assessment of paragraphing, flow, linking words, logical progression]
+• ❌ **Weaknesses:** [Key limitations preventing a higher score]
 
 📐 **Grammar & Accuracy (G/A) — X/75**
-• **Analysis:** [Detailed assessment of sentence structures, range, accuracy, grammatical control]
-• **Weaknesses:** [Key grammatical errors and patterns]
+• ✅ **Strengths:** [Detailed assessment of sentence structures, range, accuracy, grammatical control]
+• ❌ **Weaknesses:** [Key grammatical errors and patterns]
 
 📚 **Lexical Resource (L/R) — X/75**
-• **Analysis:** [Detailed assessment of vocabulary range, collocations, precision, academic tone]
-• **Weaknesses:** [Imprecise wording, repetitions, or conversational expressions]
+• ✅ **Strengths:** [Detailed assessment of vocabulary range, collocations, precision, academic tone]
+• ❌ **Weaknesses:** [Imprecise wording, repetitions, or conversational expressions]
 
 ━━━━━━━━━━━━━━━━━━━━━
 🔍 **KEY CORRECTIONS & ERROR ANALYSIS**
 
-1️⃣ **Mistake:** "[Exact quote from essay]"
+IMPORTANT RULE: Always mark mistakes with ❌ and corrections with ✅. The correction MUST be in **BOLD** font so it immediately stands out to the reader!
+
+1️⃣ ❌ **MISTAKE:** "[Exact quote from essay]"
 • 🏷 **Type:** [Grammar / Vocabulary / Collocation / Word choice / Coherence / Style]
-• ✅ **Correction:** "[Natural academic correction]"
+• ✅ **CORRECTION:** **"[Corrected academic version in BOLD]"**
 • 💡 **Explanation:** [Why it was incorrect or unnatural and how the correction improves it]
 
-2️⃣ **Mistake:** "..."
+2️⃣ ❌ **MISTAKE:** "..."
 • 🏷 **Type:** ...
-• ✅ **Correction:** ...
+• ✅ **CORRECTION:** **"..."**
 • 💡 **Explanation:** ...
 
 ━━━━━━━━━━━━━━━━━━━━━
@@ -179,32 +181,34 @@ YAKUNIY JAVOB FORMATI (Ushbu formatga qat'iy rioya qiling):
 📝 **MEZONLAR BO'YICHA BATAFSIL TAHLIL**
 
 🎯 **Task Response (T/R) — X/75**
-• **Tahlil:** [Mavzu to'liq ochilganligi, pozitsiya ravshanligi, g'oyalar rivoji va misollar tahlili o'zbek tilida]
-• **Kamchiliklar:** [Yuqoriroq ball olishga to'sqinlik qilgan sabablar]
+• ✅ **Ijobiy tomonlari:** [Mavzu to'liq ochilganligi, pozitsiya ravshanligi, g'oyalar rivoji va misollar tahlili o'zbek tilida]
+• ❌ **Kamchiliklari:** [Yuqoriroq ball olishga to'sqinlik qilgan sabablar]
 
 🔗 **Coherence & Cohesion (C/C) — X/75**
-• **Tahlil:** [Paragraflar mantiqi, fikrlar oqimi, bog'lovchi vositalarning tabiiyligi tahlili o'zbek tilida]
-• **Kamchiliklar:** [Mantiqiy uzilishlar yoki bog'lovchilarning noo'rin ishlatilishi]
+• ✅ **Ijobiy tomonlari:** [Paragraflar mantiqi, fikrlar oqimi, bog'lovchi vositalarning tabiiyligi tahlili o'zbek tilida]
+• ❌ **Kamchiliklari:** [Mantiqiy uzilishlar yoki bog'lovchilarning noo'rin ishlatilishi]
 
 📐 **Grammar & Accuracy (G/A) — X/75**
-• **Tahlil:** [Gap tuzilishi, zamonlar, artikllar, murakkab gaplar xilma-xilligi tahlili o'zbek tilida]
-• **Kamchiliklar:** [Grammatik xatolar va zaifliklar]
+• ✅ **Ijobiy tomonlari:** [Gap tuzilishi, zamonlar, artikllar, murakkab gaplar xilma-xilligi tahlili o'zbek tilida]
+• ❌ **Kamchiliklari:** [Grammatik xatolar va zaifliklar]
 
 📚 **Lexical Resource (L/R) — X/75**
-• **Tahlil:** [Akademik so'z boyligi, kollokatsiyalar, so'z shakllari tahlili o'zbek tilida]
-• **Kamchiliklar:** [Takroriy, sodda yoki so'zlashuv tiliga oid jumlalar]
+• ✅ **Ijobiy tomonlari:** [Akademik so'z boyligi, kollokatsiyalar, so'z shakllari tahlili o'zbek tilida]
+• ❌ **Kamchiliklari:** [Takroriy, sodda yoki so'zlashuv tiliga oid jumlalar]
 
 ━━━━━━━━━━━━━━━━━━━━━
 🔍 **ASOSIY XATOLAR VA TO'G'RILASHLAR**
 
-1️⃣ **Xato jumla:** "[Inshodagi asl xato matn]"
+MUHIM QOIDA: Har bir xatoni ❌ bilan va to'g'ri variantni ✅ bilan ko'rsating. To'g'ri variant matnini ALBATTA **QALIN (BOLD)** shriftda yozing, to foydalanuvchi e'tiborini darhol jalb qilsin!
+
+1️⃣ ❌ **XATO:** "[Inshodagi asl xato matn]"
 • 🏷 **Turi:** [Grammatika / Leksika / Kollokatsiya / So'z tanlash / Mantiq / Uslub]
-• ✅ **To'g'rilangan variant:** "[To'g'ri va tabiiy inglizcha variant]"
+• ✅ **TO'G'RI VARIANT:** **"[To'g'ri va tabiiy inglizcha variant - QALIN/BOLD FORMATDA]"**
 • 💡 **Izoh:** [Nima uchun bu xato hisoblanishi va to'g'rilangan variantning afzalligi o'zbek tilida]
 
-2️⃣ **Xato jumla:** "..."
+2️⃣ ❌ **XATO:** "..."
 • 🏷 **Turi:** ...
-• ✅ **To'g'rilangan variant:** ...
+• ✅ **TO'G'RI VARIANT:** **"..."**
 • 💡 **Izoh:** ...
 
 ━━━━━━━━━━━━━━━━━━━━━
